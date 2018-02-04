@@ -2,6 +2,9 @@ firewall {
     all-ping enable
     broadcast-ping disable
     group {
+        address-group ATT_FIRST {
+            address 74.91.112.83
+        }
         network-group PRIVATE_NETS {
             network 192.168.0.0/16
             network 172.16.0.0/12
@@ -47,6 +50,17 @@ firewall {
             }
             modify {
                 table main
+            }
+        }
+        rule 50 {
+            action modify
+            destination {
+                group {
+                    address-group ATT_FIRST
+                }
+            }
+            modify {
+                lb-group ATT_FIRST_G
             }
         }
         rule 110 {
@@ -143,6 +157,15 @@ interfaces {
     }
 }
 load-balance {
+    group ATT_FIRST_G {
+        interface eth1 {
+            failover-only
+        }
+        interface eth2 {
+        }
+        lb-local enable
+        lb-local-metric-change disable
+    }
     group G {
         interface eth1 {
         }
